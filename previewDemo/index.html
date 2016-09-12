@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			.none{
+				display:none;
+			}
+			.bgMask{
+			    position: fixed;
+			    top:0;
+			    right:0;
+			    bottom:0;
+			    left:0;
+			    background: rgba(0,0,0,.3);
+			}
+			#previewWin{
+			    position: fixed;
+			    top:0;
+			    right:0;
+			    bottom:0;
+			    left:0;
+			}
+			#previewPhone{
+			    position: absolute;
+			    z-index: 1;
+			    top:20px;
+			    left:50%;
+			    width:317px;
+			    height:645px;
+			    margin-left:-158.5px;
+			    background-image: url(iphone6.png);
+			    background-repeat: no-repeat;
+			    background-size:100% 100%;
+			}
+			#previewWin .bgMask{
+			    background:rgba(0,0,0,1);
+			}
+			#previewContent{
+			    position: absolute;
+			    top:96px;
+			    left:21px;
+			    height:470px;
+			    width:274px;
+			    background:#fff;
+			}
+			#previewPhone.landscape{
+			    -webkit-transform: rotate(-90deg);
+			    transform: rotate(-90deg);
+			}
+			#previewPhone.landscape #previewContent{
+			    -webkit-transform: rotate(90deg);
+			    transform: rotate(90deg);
+			    top:194px;
+			    left:-77px;
+			    height:274px;
+			    width:470px;
+			}
+			#previewClose{
+			    position: fixed;
+			    width:35px;
+			    height:35px;
+			    right:20px;
+			    top:20px;
+			    background-image: url(x.png);
+			    background-size: 100%;
+			    background-repeat: no-repeat;
+			    opacity: .4;
+			}
+			#previewClose:hover{
+			    opacity: .8;
+			}
+			.previewOri{
+			    position: absolute;
+			    width:80px;
+			    height:80px;
+			    top:20px;
+			    opacity: .4;
+			    cursor: pointer;
+			}
+			.previewOriPhone{
+			    width:80px;
+			    height:80px;
+			    background-image: url(icon_iphone6.png);
+			    background-size: 80% 80%;
+			    background-position: center center;
+			    background-repeat: no-repeat;
+			}
+			.previewOriText{
+			    color:#fff;
+			    text-align: center;
+			    font-size:14px;
+			    opacity: .9;
+			    padding-top:5px;
+			}
+			.previewOri:not(.active):hover{
+			    opacity: .5;
+			}
+			#previewOriV{
+			    left:290px;
+			}
+			#previewOriH{
+			    left:370px;
+			}
+			#previewOriH .previewOriPhone{
+			    -webkit-transform: rotate(90deg);
+			    transform: rotate(90deg);
+			}
+			.previewOri.active{
+			    opacity: 1;
+			}
+		</style>
+	</head>
+	<body>
+		<button id="previewOpen">预览</button>
+		<div id="previewWin" class="none">
+	        <div class="bgMask"></div>
+	        <div id="previewPhone" class="">
+	            <iframe id="previewContent" src="" frameborder="0"></iframe>
+	        </div>
+	        <div id="previewOriH" class="previewOri">
+	            <div class="previewOriPhone"></div>
+	            <div class="previewOriText">横屏</div>
+	        </div>
+	        <div id="previewOriV" class="previewOri active">
+	            <div class="previewOriPhone"></div>
+	            <div class="previewOriText">竖屏</div>
+	        </div>
+	        <div id="previewClose"></div>
+	    </div>
+	    <script src="jquery-2.1.1.min.js"></script>
+	    <script>
+	    	$('#previewOpen').click(function(){
+	    		$('#previewContent').attr('src','http://www.baidu.com');
+	    		$('#previewWin').removeClass('none');
+	    	});
+	    	$('#previewClose').click(function(){
+	    		$('#previewWin').addClass('none');
+	    	});
+	    	$('.previewOri').click(function(){
+		        if(!$(this).is('.active')){
+		            $('.previewOri').removeClass('active');
+		            $(this).addClass('active');
+		        }
+		        if($('#previewOriH').is('.active')){
+		            $('#previewPhone').addClass('landscape');
+		        }else{
+		            $('#previewPhone').removeClass('landscape');
+		        }
+		    });
+	    </script>
+	</body>
+</html>

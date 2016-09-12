@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			var d = new Date();
+			console.log(d.getTime(),d.getFullYear(),d.getMonth(),d.getDate());
+			
+			//1472178619000
+			var d2 = new Date();
+			console.log(1472178619000);
+			console.log(d2.getTime(),d2.getFullYear(),d2.getMonth(),d2.getDate());
+			
+			function getNowFormatDate() {
+			    var date = new Date();
+			    var seperator1 = "-";
+			    var seperator2 = ":";
+			    var month = date.getMonth() + 1;
+			    var strDate = date.getDate();
+			    if (month >= 1 && month <= 9) {
+			        month = "0" + month;
+			    }
+			    if (strDate >= 0 && strDate <= 9) {
+			        strDate = "0" + strDate;
+			    }
+			    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+			            + " " + date.getHours() + seperator2 + date.getMinutes()
+			            + seperator2 + date.getSeconds();
+			    return currentdate;
+			}
+			console.log(getNowFormatDate());
+			
+			
+			
+			
+			/*
+ <div class="mask_body">
+	<div class="root-container container none" ></div>
+</div>
+ * */
+var maskIdx = 4;
+function enterIce(){
+	$(this).removeClass('freeze selected mouseover focus');
+	var top = 0;
+	var obj = $(this);
+	while(!obj.is('body')){
+		obj.removeClass('selected mouseover focus');
+		top += obj[0].offsetTop;
+		obj = obj.parent();
+	}
+	var width = this.offsetWidth,
+		height = this.offsetHeight,
+		left = this.offsetLeft;
+	var comp = $(this).clone(true)
+				.css({'top':top,'left':left,'width':width});
+	$(this).attr('id','ice_'+(++maskIdx));
+	var mask = $('<div class="mask_body root-container container" id="root_5"></div>').attr('id','root_'+maskIdx).css('z-index',maskIdx+1);
+	mask.append(comp);	
+	$('body').prepend(mask);
+	selectComp(comp);
+}
+function leaveIce(){
+	var mask = $(this);
+	var idx = mask.attr('id').replace('root_','');
+	var ice = $('#ice_'+idx);
+	var comp = mask.children('.comp').addClass('freeze').css({'top':'initial','left':'initial','width':'initial'});
+	ice.after(comp);
+	ice.remove();
+	selectComp(comp);
+	mask.remove();
+	maskIdx--;
+}
+		</script>
+	</body>
+</html>

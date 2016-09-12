@@ -1,0 +1,38 @@
+body{
+	background:#fff;
+}
+.mui-scroll{
+	padding:20px 15px;
+}
+h1,h2,h3,h4,h5,h6{
+	color:#000;
+}
+h1,h2{
+	font-size:24px;
+	line-height: 30px;
+}
+h3,h4{
+	font-size:18px;
+	line-height: 24px;
+}
+h5,h6{
+	font-size:14px;
+	line-height: 20px;
+}
+p{
+	color:#333;
+	font-size:14px;
+	line-height: 24px;
+}
+.article_info{
+	font-size:14px;
+	color:#999;
+	line-height: 24px;
+}
+.article_author{
+	margin-left:10px;
+}
+.article_content img{
+	max-width: 100%;
+	margin:5px 0;
+}

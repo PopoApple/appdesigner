@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>html5 drag &amp; drop 拖拽与拖放测试</title>
+		<style>
+			body{font-size:84%;}
+			.dustbin{width:100px; height:260px; line-height:1.4; background-color:gray; font-size:36px; font-family:"微软雅黑", "Yahei Mono"; text-align:center; text-shadow:-1px -1px #bbb; float:left;}
+			.dragbox{width:500px; padding-left:20px; float:left;}
+			.draglist{padding:10px; margin-bottom:5px; border:2px dashed #ccc; background-color:#eee; cursor:move;}
+			.draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;}
+			.dragremind{padding-top:2em; clear:both;}
+		</style>
+	</head>
+
+	<body>
+		<div class="dustbin">
+			<br />垃
+			<br />圾
+			<br />箱</div>
+		<div class="dragbox">
+			<div class="draglist" title="拖拽我" draggable="true">列表1</div>
+			<div class="draglist" title="拖拽我" draggable="true">列表2</div>
+			<div class="draglist" title="拖拽我" draggable="true">列表3</div>
+			<div class="draglist" title="拖拽我" draggable="true">列表4</div>
+			<div class="draglist" title="拖拽我" draggable="true">列表5</div>
+			<div class="draglist" title="拖拽我" draggable="true">列表6</div>
+		</div>
+		<div class="dragremind"></div>
+		<script>
+			var $ = function(selector) {
+				if (!selector) { return []; }
+				var arrEle = [];
+				if (document.querySelectorAll) {
+					arrEle = document.querySelectorAll(selector);
+				} else {
+					var oAll = document.getElementsByTagName("div"), lAll = oAll.length;
+					if (lAll) {
+						var i = 0;
+						for (i; i<lAll; i+=1) {
+							if (/^\./.test(selector)) {
+								if (oAll[i].className === selector.replace(".", "")) {
+									arrEle.push(oAll[i]);
+								}
+							} else if(/^#/.test(selector)) {
+								if (oAll[i].id === selector.replace("#", "")) {
+									arrEle.push(oAll[i]);
+								}
+							}
+						}
+					}
+				}
+				return arrEle;
+			};
+			
+			var eleDustbin = $(".dustbin")[0], eleDrags = $(".draglist"), lDrags = eleDrags.length, eleRemind = $(".dragremind")[0], eleDrag = null;
+			for (var i=0; i<lDrags; i+=1) {
+				eleDrags[i].onselectstart = function() {
+					return false;
+				};
+				eleDrags[i].ondragstart = function(ev) {
+					ev.dataTransfer.effectAllowed = "move";
+					ev.dataTransfer.setData("text", ev.target.innerHTML);
+					ev.dataTransfer.setDragImage(ev.target, 0, 0);
+					eleDrag = ev.target;
+					return true;
+				};
+				eleDrags[i].ondragend = function(ev) {
+					ev.dataTransfer.clearData("text");
+					eleDrag = null;
+					return false
+				};
+			}
+			eleDustbin.ondragover = function(ev) {
+				ev.preventDefault();
+				return true;
+			};
+			
+			eleDustbin.ondragenter = function(ev) {
+				this.style.color = "#ffffff";
+				return true;
+			};
+			eleDustbin.ondrop = function(ev) {
+				if (eleDrag) {
+					eleRemind.innerHTML = '<strong>"' + eleDrag.innerHTML + '"</strong>被扔进了垃圾箱';
+					eleDrag.parentNode.removeChild(eleDrag);
+				}
+				this.style.color = "#000000";
+				return false;
+			};
+		</script>
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			  _gaq.push(['_setAccount', 'UA-11205167-1']);
+			  _gaq.push(['_trackPageview']);
+			
+			  (function() {
+				var ga = document.createElement('script');
+				 ga.type = 'text/javascript';
+				 ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			  })();
+		</script>
+	</body>
+
+</html>

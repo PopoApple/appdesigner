@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="gbk">
+    <title>微服务云平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/designer.css">
+    <!--<script src=js/pageList.js></script>-->
+    <script src="js/browser.js"></script>
+    <script>
+    	var testMode = false;
+    	var isDesigner = true;
+    </script>
+    <script>
+        /*var pageList = [
+            {
+                pageid:'1',
+                id:'0',
+                name:'页面 1',
+                header:{"id":"1",show:1,"children":[{"type":"grid","containers":[{"width":"15%","children":[{"type":"icon","align":"center","id":"13","shape":"bars","color":"rgb(0, 128, 255)","padding":"5px 0px 0px","linkType":"menu","linkSubtype":"menu_l"}]},{"width":"70%","children":[{"type":"text","align":"center","ispagename":1,"html":"页面 1","padding":"14px 0px 0px","id":"12"}]},{"width":"15%"}],"id":"11"}]},
+                leftmenu:{id:'2'},
+                rightmenu:{id:'3'},
+                footer:{id:'4',show:0},
+                children:[],
+                ishome:1,
+                iscurrent:1
+            }
+        ];*/
+       function outputComp(){
+       		var subDoc = $('#phonecontent').contents();
+       		var currComp = subDoc.find('.comp.selected'); 
+       		var currData = pWin.getCompData(currComp.attr('id').split('_')[1]);
+       		console.log(JSON.stringify(currData));
+       }
+        function outputPage(){
+            console.log(JSON.stringify(pWin.pageData));
+        }
+        function saveSite(){
+            localStorage.pageList = JSON.stringify(pageList);
+            localStorage.homePageId = homePageId;
+        }
+        function loadSite(){
+            pageList = JSON.parse(localStorage.pageList);
+            homePageId = JSON.parse(localStorage.homePageId);
+            for(var i=0;i<pageList.length;i++){
+                var page = pageList[i];
+                if(page.pageid == homePageId){
+                    homePage = page;
+                }
+            }
+            initSite();
+        }
+        function outputSite(){
+            console.log(JSON.stringify(pageList));
+        }
+    </script>
+    <style>
+    	/*#topContainer,#mainContainer{
+    		left:0;
+    	}*/
+    </style>
+</head>
+
+<body>
+	<div style="position:absolute;z-index:2;top:5px;left:5px;">
+    	<button id="outputComp" onclick="outputComp()">输出当前组件</button>
+        <button id="outputPage" onclick="outputPage()">输出当前页</button>
+        <button id="saveSite" onclick="saveSite()">保存</button>
+        <button id="loadSite" onclick="loadSite()">载入</button>
+        <button id="outputSite" onclick="outputSite()">输出</button>
+        <input id="siteId" type="text" value="21" />
+        <input id="rootPath" type="text" value="http://10.17.47.75:8080/portal" />
+    </div>
+    <div id="mainContainer" style="left:0px;top:0px">
+        <div class="loading" style="left:0px;top:0px">
+            <span class="mui-spinner mui-spinner-white"></span>
+        </div>
+        <div class="toast none" style="left:0px;top:0px">
+            <span>加载失败</span>
+        </div>
+        <div id="pagesContainer" class="box">
+             <div class="loading none">
+                 <span class="mui-spinner"></span>
+             </div>
+            <div class="toast none">
+                <span>操作失败</span>
+            </div>
+             <div class="box_btn" id="addPage">
+                <div class="iconfont icon-jiahao"></div>
+                 添加
+            </div>
+            <div class="box_title">
+                页面管理
+            </div>
+            <div id="pageList"></div>
+        </div>
+        <div id="compsContainer" class="box">
+             <div class="tab_item active" id="basicTabBtn">基本组件</div>
+             <div class="tab_item" id="blockTabBtn">预制模块</div>
+            <div class="box_title">
+                组件
+            </div>
+            <div class="tab_content active" id="tab_content_basic">
+                   <!--<div class="component" id="comp_test">
+                        <img class="comp_img" src="" alt="">
+                        <div class="comp_text">test</div>
+                    </div>-->
+                   <div class="component" id="comp_image">
+                        <img class="comp_img" src="imgs/comps/image.png" draggable="false" alt="">
+                        <div class="comp_text">图片</div>
+                    </div>
+                    <div class="component" id="comp_text">
+                        <img class="comp_img" src="imgs/comps/text.png" draggable="false" alt="">
+                        <div class="comp_text">文本</div>
+                    </div>
+                    <div class="component" id="comp_icon">
+                        <img class="comp_img" src="imgs/comps/icon.png" draggable="false" alt="">
+                        <div class="comp_text">图标</div>
+                    </div>
+                    <div class="component" id="comp_div">
+                        <img class="comp_img" src="imgs/comps/div.png" draggable="false" alt="">
+                        <div class="comp_text">底板</div>
+                    </div>
+                    <div class="component" id="comp_grid">
+                        <img class="comp_img" src="imgs/comps/grid.png" draggable="false" alt="">
+                        <div class="comp_text">网格</div>
+                    </div>
+                    <div class="component" id="comp_slider">
+                        <img class="comp_img" src="imgs/comps/slider.png" draggable="false" alt="">
+                        <div class="comp_text">轮播页</div>
+                    </div>
+                    <div class="component" id="comp_list">
+                        <img class="comp_img" src="imgs/comps/list.png" draggable="false" alt="">
+                        <div class="comp_text">数据表格</div>
+                    </div>
+                    <div class="component" id="comp_form">
+                        <img class="comp_img" src="imgs/comps/form.png" draggable="false" alt="">
+                        <div class="comp_text">表单</div>
+                    </div>
+                    <!--<div class="component" id="comp_input">
+                        <img class="comp_img" src="" alt="">
+                        <div class="comp_text">输入框</div>
+                    </div>
+                    <div class="component" id="comp_textarea">
+                        <img class="comp_img" src="" alt="">
+                        <div class="comp_text">多行输入</div>
+                    </div>
+                    <div class="component" id="comp_radioG">
+                        <img class="comp_img" src="" alt="">
+                        <div class="comp_text">单选框组</div>
+                    </div>
+                    <div class="component" id="comp_checkboxG">
+                        <img class="comp_img" src="" alt="">
+                        <div class="comp_text">复选框组</div>
+                    </div>
+                    <div class="component" id="comp_select">
+                        <img class="comp_img" src="" alt="">
+                        <div class="comp_text">选择框</div>
+                    </div>-->
+               </div>
+               <div class="tab_content" id="tab_content_blocks">
+               </div>
+        </div>
+        <div id="phoneContainer">
+             <div class="loading none">
+                 <span class="mui-spinner"></span>
+             </div>
+            <div class="tips none">
+                <span>提示信息</span>
+            </div>
+            <div class="toast none">
+                <span>自动消失提示信息</span>
+            </div>
+            <div id="phoneDecor1" class="phone_decor"></div>
+            <div id="phoneDecor2" class="phone_decor"></div>
+            <div id="phoneDecor3" class="phone_decor"></div>
+            <iframe id="phonecontent" src="page.html" frameborder="0"></iframe>
+        </div>
+        <div id="toolsContainer">
+                <div id="phoneTool_delete" class="phoneTool disable" title="删除"></div>
+                <div class="phoneToolSplit"></div>
+                <div id="phoneTool_copy" class="phoneTool disable" title="复制"></div>
+                <div class="phoneToolSplit"></div>
+                <div id="phoneTool_paste" class="phoneTool disable" title="粘贴"></div>
+                <div class="phoneToolSplit"></div>
+                <div id="phoneTool_freeze" class="phoneTool disable" title="冻结"></div>
+                <div class="phoneToolSplit"></div>
+                <div id="phoneTool_preview" class="phoneTool disable" title="预览"></div>
+                <div class="phoneToolSplit"></div>
+                <div id="phoneTool_save" class="phoneTool disable" title="保存当前页面"></div>
+         <div class="phoneToolSplit"></div>
+                <div id="phoneTool_publish" class="phoneTool" title="发布页面"></div>
+        </div>
+        <div id="setContainer" class="box">
+            <div class="box_title">属性<span id="compType"></span></div>
+            <div class="setting" id="pageSetting">
+                <div class="form_row clearfix">
+                    <label class="lab_block">顶部栏</label>   
+                    <div class="form_col">
+                        <input type="checkbox" id="pageShowHeader" checked>显示
+                    </div>   
+                    <div class="form_col">
+                        <input type="checkbox" id="pageFreezeHeader">冻结
+                    </div>  
+                </div>
+                <div class="form_row clearfix">
+                    <label class="lab_block">底部栏</label>   
+                    <div class="form_col">
+                        <input type="checkbox" id="pageShowFooter" checked>显示
+                    </div>   
+                    <div class="form_col">
+                        <input type="checkbox" id="pageFreezeFooter">冻结
+                    </div>  
+                </div>
+                <div class="form_row clearfix">
+                    <label class="lab_block">编辑菜单</label>  
+                    <label class="form_col">左菜单：</label> 
+                    <div class="form_col">
+                        <button id="pageEditMenu_left" class="btn_mini">编辑</button>
+                    </div> 
+                    <label class="form_col">右菜单：</label> 
+                    <div class="form_col">
+                        <button id="pageEditMenu_right" class="btn_mini">编辑</button>
+                    </div> 
+                </div>
+            </div>
+            <div class="setting" id="gridSetting">
+                <div class="form_row">
+                    <label class="lab_block">
+                          <div class="floatLeft">布局</div>
+                          <button id="addColBtn" class="floatRight btn_mini" style="margin-top:4px">添加列</button>
+                    </label>
+                    <div id="colEditBox">
+                        <div class="col-edit-cell" style="width:50%" draggable="true" >50%</div>
+                        <div class="col-edit-bar">
+                            <div class="col-edit-bar-btn"></div>
+                        </div>
+                        <div class="col-edit-cell" style="width:50%" draggable="true" >50%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="setting" id="divSetting">
+                <div class="form_row">
+                       <label class="lab_block">背景色</label>
+                       <input id="divBgcolor" type="color" title="设置背景色">
+                </div>
+                <div class="form_row clearfix">
+                      <label class="lab_block">
+                          <div class="floatLeft">边线</div>
+                          <div id="divShowDetail_border" class="floatRight showDetail" title="分别设置四边">
+                              详细设置
+                          </div>
+                      </label>
+                      <div class="clearfix">
+                          <label class="form_col">粗细：</label>
+                          <div class="form_col">
+                              <input type="number" min=0 id="divBorderWidth" >
+                          </div>
+                          <label class="form_col">颜色：</label>
+                          <div class="form_col">
+                              <input type="color" id="divBorderColor" >
+                          </div>
+                          <label class="form_col">样式：</label>
+                          <div class="form_col">
+                              <select id="divBorderStyle">
+                                    <option value="solid">实线</option>
+                                    <option value="dashed">虚线</option>
+                                    <option value="dotted">点状</option>
+                               </select>
+                          </div>
+                      </div>
+                       <div id="divBorderDetail" class="none">
+                           <div class="clearfix" style="margin-top:10px;">
+                              <label class="form_col">上：</label>
+                              <div class="form_col form_col_close">
+                                  <input id="divBorderWidthT" type="number" min=0 title="设置上边线宽度">
+                              </div>
+                              <div class="form_col form_col_close">
+                                   <input id="divBorderColorT" type="color" title="设置上边线颜色">
+                              </div>
+                              <div class="form_col form_col_close">
+                                  <select id="divBorderStyleT" title="设置上边线风格">
+                                    <option value="solid">实线</option>
+                                    <option value="dashed">虚线</option>
+                                    <option value="dotted">点状</option>
+                                  </select>
+                              </div>
+                           </div>
+                           <div class="clearfix" style="margin-top:10px;">
+                              <label class="form_col">下：</label>
+                              <div class="form_col form_col_close">
+                                   <input id="divBorderWidthB" type="number" min=0 title="设置下边线宽度">
+                              </div>
+                              <div class="form_col form_col_close">
+                                   <input id="divBorderColorB" type="color" title="设置下边线颜色">
+                              </div>
+                              <div class="form_col form_col_close">
+                                   <select id="divBorderStyleB" title="设置下边线风格">
+                                        <option value="solid">实线</option>
+                                        <option value="dashed">虚线</option>
+                                        <option value="dotted">点状</option>
+                                    </select>
+                              </div>
+                           </div>
+                           <div class="clearfix" style="margin-top:10px;">
+                              <label class="form_col">左：</label>
+                              <div class="form_col form_col_close">
+                                   <input id="divBorderWidthL" type="number" min=0 title="设置左边线宽度">
+                              </div>
+                              <div class="form_col form_col_close">
+                                   <input id="divBorderColorL" type="color" title="设置左边线颜色">
+                              </div>
+                              <div class="form_col form_col_close">
+                                   <select id="divBorderStyleL" title="设置左边线风格">
+                                        <option value="solid">实线</option>
+                                        <option value="dashed">虚线</option>
+                                        <option value="dotted">点状</option>
+                                    </select>
+                              </div>
+                           </div>
+                           <div class="clearfix" style="margin-top:10px;">
+                              <label class="form_col">右：</label>
+                              <div class="form_col form_col_close">
+                                  <input id="divBorderWidthR" type="number" min=0 title="设置右边线宽度">
+                              </div>
+                              <div class="form_col form_col_close">
+                                  <input id="divBorderColorR" type="color" title="设置右边线颜色">
+                              </div>
+                              <div class="form_col form_col_close">
+                                    <select id="divBorderStyleR" title="设置右边线风格">
+                                        <option value="solid">实线</option>
+                                        <option value="dashed">虚线</option>
+                                        <option value="dotted">点状</option>
+                                    </select>
+                              </div>
+                           </div>
+                       </div>
+                </div>
+                <div class="form_row">
+                      <label class="lab_block">
+                          <div class="floatLeft">圆角</div>
+                          <div id="divShowDetail_radius" class="floatRight showDetail"  title="分别设置四角">
+                              详细设置
+                          </div>
+                      </label>
+                      <div>
+                           <input id="divCorner" type="number" min=0 title="设置圆角大小">
+                      </div>
+                       <div id="divRadiusDetail" class="none" style="margin-top:10px">
+                           <div class="clearfix">
+                                  <label class="form_col">左上：</label>
+                                  <div class="form_col">
+                                      <input id="divCornerTL" type="number" min=0 title="设置左上圆角大小">
+                                  </div>
+                                  <label class="form_col">右上：</label>
+                                  <div class="form_col">
+                                      <input id="divCornerTR" type="number" min=0 title="设置右上圆角大小">
+                                  </div>
+                           </div>
+                           <div class="clearfix" style="margin-top:10px">
+                                  <label class="form_col">左下：</label>
+                                  <div class="form_col">
+                                      <input id="divCornerBL" type="number" min=0 title="设置左下圆角大小">
+                                  </div>
+                                  <label class="form_col">右下：</label>
+                                  <div class="form_col">
+                                      <input id="divCornerBR" type="number" min=0 title="设置右下圆角大小">
+                                  </div>
+                           </div>
+                       </div>
+                </div>
+                <div class="form_row clearfix">
+                       <label class="lab_block">大小</label>
+                       <label class="form_col">宽度：</label>
+                       <div class="form_col">
+                            <select id="divWidth">
+                                <option value="1">默认</option>
+                                <option value="2">固定值</option>
+                            </select>
+                            <input id="divWidthCustom" type="number" min=0>
+                       </div>
+                       <label class="form_col">高度：</label>
+                       <div class="form_col">
+                            <select id="divHeight">
+                                <option value="1">默认</option>
+                                <option value="2">固定值</option>
+                            </select>
+                            <input id="divHeightCustom" type="number" min=0>
+                       </div>
+                 </div>
+                   <div id="commonSetting_align" class="none">
+                      <div class="form_row clearfix">
+                          <label class="lab_block">对齐方式</label>
+                           <div id="commonAlign">
+                                <div class="form_col">
+                                    <input type="radio" name="commonAlign" value="0" />居左
+                                </div>
+                                <div class="form_col">
+                                    <input type="radio" name="commonAlign" value="1" />居中
+                                </div>
+                                <div class="form_col">
+                                    <input type="radio" name="commonAlign" value="2" />居右
+                                </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div id="commonSetting_space" class="none">
+                      <div class="form_row clearfix">
+                          <label class="lab_block">边距</label>
+                          <label class="form_col">上：</label>
+                          <div class="form_col">
+                              <input id="commonSpaceT" type="number" min=0 title="设置上边距">
+                          </div>
+                          <label class="form_col">下：</label>
+                          <div class="form_col">
+                              <input id="commonSpaceB" type="number" min=0 title="设置下边距">
+                          </div>
+                          <label class="form_col">左：</label>
+                          <div class="form_col">
+                              <input id="commonSpaceL" type="number" min=0 title="设置左边距">
+                          </div>
+                          <label class="form_col">右：</label>
+                          <div class="form_col">
+                              <input id="commonSpaceR" type="number" min=0 title="设置右边距"> 
+                          </div>
+                      </div>
+                   </div>
+                   <div id="commonSetting_link" class="none">
+                      <div class="form_row">
+                          <label class="lab_block">点击事件</label>
+                           <div id="linkPanel">
+                                <select id="link_sel">
+                                    <option value="none">无</option>
+                                    <option value="page">跳转页面</option>
+                                    <option value="menu">打开菜单</option>
+                                    <option value="menu_close" class="none">关闭菜单</option>
+                                    <option value="form" class="none">提交表单</option>
+                                </select>
+                                <select id="link_sel_page" class="linkSubtype none">
+                                    <option value="custom">定制页面</option>
+                                    <option value="product" class="none">商品详情页</option>
+                                    <option value="article" class="none">文章内容页</option>
+                                    <option value="url">输入地址</option>
+                                    <option value="prev">前一页</option>
+                                    <option value="next">后一页</option>
+                                </select>
+                                <select id="link_sel_page_custom" class="linkSubtype2 none">
+                                    <option value="0">主页</option>
+                                </select>
+                                <input id="link_sel_page_url" class="linkSubtype2 none" type="url" placeHolder="请输入URL，如：http://www.xx.com" />
+                                <select id="link_sel_menu" class="linkSubtype none">
+                                    <option value="menu_l">左菜单</option>
+                                    <option value="menu_r">右菜单</option>
+                                </select>
+                           </div>
+                      </div>
+                   </div>
+            </div>
+            <div class="setting" id="textSetting">
+               <div id="textContentType" class="form_row clearfix">
+                   <label class="lab_block">内容来源</label> 
+                   <span class="textCT form_col" data-value="hand"><input type="radio" name="textCtIpt" value="hand" checked />输入</span>
+                   <span class="textCT form_col" data-value="pagename"><input type="radio" name="textCtIpt" value="pagename" />页面名称</span>
+                   <span class="textCT form_col" data-value="product"><input type="radio" name="textCtIpt" value="product" />商品数据</span>
+                   <span class="textCT form_col" data-value="article"><input type="radio" name="textCtIpt" value="article" />文章数据</span>
+                    <span id="textDatasrcTypeWrapper" class="none form_col">
+                        <span id="textDatasrcType_product" class="none">
+                            <label for="" class="form_col">字段：</label>
+                            <div class="form_col">
+                                <select>
+                                    <option value="title">商品名称</option>
+                                    <option value="summary">商品描述</option>
+                                    <option value="price">商品价格</option>
+                                    <option value="selled">已售数量</option>
+                                    <option value="date">上架日期</option>
+                                </select>
+                            </div>
+                        </span>
+                        <span id="textDatasrcType_article" class="none">
+                            <label for="" class="form_col">数据源：</label>
+                            <div class="form_col">
+                                <select>
+                                    <option value="title">文章标题</option>
+                                    <option value="summary">文章摘要</option>
+                                    <option value="pv">点击次数</option>
+                                    <option value="date">发布日期</option>
+                                    <option value="year">---- 年 ----</option>
+                                    <option value="month">---- 月 ----</option>
+                                    <option value="day">---- 日 ----</option>
+                                    <option value="time">发布时间</option>
+                                    <option value="hour">---- 时 ----</option>
+                                    <option value="minute">---- 分 ----</option>
+                                </select>
+                            </div>
+                        </span>
+                    </span>
+               </div>
+               <div class="form_row">
+                    <label class="lab_block">编辑内容</label> 
+                   <textarea id="textEditor" name="content" style="width:100%;">
+                   </textarea>
+                </div>
+            </div>
+            <div class="setting" id="imageSetting">
+                <div class="form_row clearfix">
+                   <label class="lab_block">图片源</label>  
+                   <div class="form_col">
+                       <button id="imageSrc" class="btn btn_mini">从图片库选择</button>
+                   </div> 
+                   <div class="form_col">
+                       <span id="imageDynData"><input type="checkbox" >绑定数据源</span>
+                   </div>      
+                </div>
+                <div class="form_row">
+                   <label class="lab_block">文字描述</label>
+                   <input type="text" id="imageDesc">
+                </div>
+                <div class="form_row clearfix">
+                   <label class="lab_block">大小 </label>
+                   <label class="form_col">宽度：</label>
+                   <div class="form_col">
+                        <select id="imageWidth">
+                            <option value="1">默认</option>
+                            <option value="2">固定值</option>
+                            <option value="3">100%</option>
+                        </select>
+                        <input id="imageWidthCustom" type="number" min=1>
+                   </div>
+                   <label class="form_col">高度：</label>
+                   <div class="form_col">
+                        <select id="imageHeight">
+                            <option value="1">默认</option>
+                            <option value="2">固定值</option>
+                        </select>
+                        <input id="imageHeightCustom" type="number" min=1>
+                   </div>
+                </div>
+            </div>
+            <div class="setting" id="iconSetting">
+              <div class="form_row clearfix">
+                  <label class="lab_block">图标样式</label>
+                  <label class="form_col">形状：</label>
+                  <div id="iconSelShape" class="form_col">
+                       <button id="iconShape" class="btn_mini">选择...</button>
+                       <div id="iconPopup" class="none">
+                        <span class="wrapper"><span class="mui-icon mui-icon-contact"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-person"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-personadd"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-phone"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-email"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-chatbubble"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-chatboxes"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-weibo"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-weixin"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-pengyouquan"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-chat"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-qq"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-videocam"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-camera"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-image"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-mic"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-micoff"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-location"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-map"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-compose"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-trash"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-upload"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-download"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-close"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-closeempty"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-redo"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-undo"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-refresh"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-refreshempty"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-reload"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-loop"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-star"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-starhalf"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-plus"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-plusempty"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-minus"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-checkmarkempty"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-search"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-home"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-navigate"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-gear"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-settings"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-list"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-bars"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-paperplane"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-info"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-help"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-locked"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-more"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-flag"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-paperclip"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-back"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-forward"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowup"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowdown"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowleft"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowright"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowthinup"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowthindown"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowthinleft"></span></span>
+                        <span class="wrapper"><span class="mui-icon mui-icon-arrowthinright"></span></span>
+
+                        <span class="wrapper"><span class="mui-icon mui-icon-pulldown"></span></span>
+                   </div>
+                  </div>
+                  <label class="form_col">颜色：</label>
+                  <input class="form_col" type="color" id="iconColor" />
+                  <label class="form_col">大小：</label>
+                  <input class="form_col" id="iconSize" type="number" min=12>
+               </div>
+            </div>  
+            <div class="setting" id="sliderSetting">
+              <div class="form_row clearfix">
+                  <label for="" class="lab_block">编辑页</label>
+                  <button id="sliderAdd" class="btn_mini form_col">添加</button>
+                   <button id="sliderDel" class="btn_mini form_col">删除当前页</button>
+              </div>
+              <div class="form_row clearfix">
+                  <label for="" class="lab_block">自动轮播</label>
+                  <div class="form_col">
+                       <input type="radio" name="sliderAutoplay" value="0" />关
+                  </div>
+                  <div class="form_col">
+                       <input type="radio" name="sliderAutoplay" value="1" />开
+                  </div>
+                   <span class="form_col" id="sliderPlaytime">
+                       间隔时间：<input id="sliderPlaytimeIpt" min=0.1 step=0.1 type="number" value=4 />秒
+                   </span>
+              </div>
+              <div class="form_row clearfix">
+                  <label for="" class="lab_block">页码</label>
+                  <div class="form_col">
+                       <input type="radio" name="sliderDot" value="2" />无
+                  </div>
+                  <div class="form_col">
+                       <input type="radio" name="sliderDot" value="0" />居中
+                  </div>
+                  <div class="form_col">
+                       <input type="radio" name="sliderDot" value="1" />居右
+                  </div>
+              </div>
+            </div>
+            <div class="setting" id="listSetting">
+               <div class="form_row clearfix" id="listRC" >
+                   <label for="" class="lab_block">布局</label>
+                   <label class="form_col">行数：</label>
+                   <div class="form_col">
+                        <input type="number" id="listRowCnt" value=3 min=1 />
+                   </div>
+                   <label class="form_col">列数：</label>
+                   <div class="form_col">
+                        <select id="listColCnt">
+                            <option value=1>1列</option>
+                            <option value=2>2列</option>
+                            <option value=3>3列</option>
+                            <option value=4>4列</option>
+                        </select>
+                   </div>
+               </div>
+               <div class="form_row clearfix" id="listData">
+                   <label for="" class="lab_block">数据源</label>
+                   <label class="form_col">来源：</label>
+                   <div class="form_col">
+                        <select id="listSrcType">
+                            <option value="product">商品</option>
+                            <option value="article">文章</option>
+                        </select>
+                   </div>
+                   <div class="form_col" id="listSrcType_product">
+                       <label class="form_col">分类：</label>
+                       <div class="form_col">
+                            <select>
+                                <option value="0">全部</option>
+                            </select>
+                       </div>
+                   </div>
+                   <div class="form_col" id="listSrcType_article">
+                       <label class="form_col">栏目：</label>
+                       <div class="form_col">
+                            <select>
+                                <option value="0">全部</option>
+                            </select>
+                       </div>
+                   </div>
+                   <div style="clear:left;">
+                       <span id="listNodataTips_product" class="listTips none"><span class="listTipsPre">该分类下</span>还没有商品，<a href="javascript:;">去添加&gt;&gt;</a></span>
+                            <span id="listNodataTips_article" class="listTips none"><span class="listTipsPre">该栏目下</span>还没有文章，<a href="javascript:;">去添加&gt;&gt;</a></span>
+                            <span id="listFailTips" class="listTips none">获取数据源失败，请检查网络后，<a href="javascript:;">重试</a></span>
+                   </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">无限加载</label>
+                    <input type="checkbox" id="listInfinite">开启
+                </div>
+            </div>
+            <div class="setting" id="formSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="formName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="formShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">添加表单项</label>
+                    <div id="formAddBtns">
+                        <button id="formAdd_input" class="btn_mini" title="点击添加文本框">文本框</button>
+                        <button id="formAdd_textarea" class="btn_mini" title="点击添加多行文本框">多行文本框</button>
+                        <button id="formAdd_radioG" class="btn_mini" title="点击添加单选框组">单选框组</button>
+                        <button id="formAdd_checkboxG" class="btn_mini" title="点击添加复选框组">复选框组</button>
+                        <button id="formAdd_select" class="btn_mini" title="点击添加选择框">选择框</button>
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">提交按钮</label>
+                    <input type="checkbox" id="formShowBtn">显示
+               </div>
+            </div>
+            <div class="setting" id="inputSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="inputName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="inputShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">提示文字</label>
+                    <input id="inputPlaceholder" type="text">
+               </div>
+               <div class="form_row clearfix">
+                   <label class="lab_block">校验</label>
+                    <label for="" class="form_col">类型：</label>
+                    <div class="form_col">
+                        <select id="inputType">
+                            <option value="0">无</option>
+                            <option value="1">手机号</option>
+                            <option value="2">邮箱</option>
+                            <option value="3">数字</option>
+                            <option value="4">网址</option>
+                        </select>
+                    </div>
+                    <div class="form_col">
+                        <input type="checkbox" id="inputRequired">必填
+                    </div>
+               </div>
+            </div>
+            <div class="setting" id="textareaSetting">
+              <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="textareaName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="textareaShowName">显示
+                    </div>
+               </div>
+              <div class="form_row">
+                   <label class="lab_block">提示文字</label>
+                    <input id="textareaPlaceholder" type="text">
+               </div>
+              <div class="form_row">
+                   <label class="lab_block">行数</label>
+                    <input id="textareaRows" type="number" min=2 >
+               </div>
+              <div class="form_row">
+                   <label class="lab_block">校验</label>
+                    <input type="checkbox" id="textareaRequired">必填
+               </div>
+            </div>
+            <div class="setting" id="radioGSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="radioGName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="radioGShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">编辑选项</label>
+                    <button id="radioGAdd" class="btn_mini">添加</button>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">校验</label>
+                    <input type="checkbox" id="radioGRequired">必填
+               </div>
+            </div>
+            <div class="setting" id="checkboxGSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="checkboxGName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="checkboxGShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">编辑选项</label>
+                    <button id="checkboxGAdd" class="btn_mini">添加</button>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">校验</label>
+                    <input type="checkbox" id="checkboxGRequired">必填
+               </div>
+            </div>
+            <div class="setting" id="radioSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="radioName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="radioShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">默认状态</label>
+                    <input type="checkbox" id="radioChecked">选中
+               </div>
+            </div>
+            <div class="setting" id="checkboxSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="checkboxName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="checkboxShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">默认状态</label>
+                    <input type="checkbox" id="checkboxChecked">选中
+               </div>
+            </div>
+            <div class="setting" id="selectSetting">
+               <div class="form_row clearfix">
+                   <label class="lab_block">名称</label>
+                    <input type="text" id="selectName" class="form_col">
+                    <div class="form_col">
+                        <input type="checkbox" id="selectShowName">显示
+                    </div>
+               </div>
+               <div class="form_row">
+                    <div class="lab_block">
+                          <div class="floatLeft">编辑选项</div>
+                          <!--<button id="selectOptCheck" class="btn_mini form_title_btn">默认选中</button>
+                          <button id="selectOptDel" class="btn_mini form_title_btn">删除</button>-->
+                          <button id="selectOptAdd" class="btn_mini form_title_btn">添加</button>
+                    </div>
+                    <div id="selectOpt" class="clearfix">
+                      <div class="selectOptRow clearfix">
+                          <div class="form_col">
+                              <input type="radio" name="selectOptChecked">
+                          </div>
+                          <div class="form_col form_col_close">
+                              <input type="text" value="请选择...">
+                          </div>
+                          <button class="form_col btn_mini btn_link">删除</button>
+                      </div>
+                     </div>
+               </div>
+               <div class="form_row">
+                   <label class="lab_block">校验</label>
+                  <input type="checkbox" id="selectRequired">必填
+               </div>
+        </div>
+    </div>
+    <div id="previewWin" class="none">
+        <div class="bgMask"></div>
+        <div id="previewPhone" class="">
+            <iframe id="previewContent" src="" frameborder="0"></iframe>
+        </div>
+        <div id="previewOriH" class="previewOri">
+            <div class="previewOriPhone"></div>
+            <div class="previewOriText">横屏</div>
+        </div>
+        <div id="previewOriV" class="previewOri active">
+            <div class="previewOriPhone"></div>
+            <div class="previewOriText">竖屏</div>
+        </div>
+        <div id="previewClose"></div>
+    </div>
+    <div id="imageWin" class="none">
+        <div class="bgMask"></div>
+        <div id="imageWinMain" class="box">
+            <div class="box_title">选择图片</div>
+            <div id="imageWinBody">
+	            <div class="tips none">
+	                <span>提示信息</span>
+	            </div>
+                <div id="imageWrap">
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                    <div class="imageNail">
+                        <img src="images/image.jpg" alt="">
+                        <div class="imageNailName">图片名称.jpg</div>
+                    </div>
+                </div>
+                <div id="imageWinLoading" class="none">
+                    <span class="mui-spinner"></span>
+                </div>
+            </div>
+            <div id="imageWinFooter">
+                <button id="imageConfirm">确定</button>
+                <button id="imageCanel">取消</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/common.js"></script>
+    <script charset="gbk" src="js/editor/kindeditor.js"></script>
+    <script charset="gbk" src="js/editor/plugins/autoheight/autoheight.js"></script>
+    <script charset="gbk" src="js/editor/zh_CN.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/data1_fake.js"></script>
+    <script src="js/blocks.js"></script>
+    <!--<script src="js/pageLinks.js"></script>-->
+    <script src="js/index.js"></script>
+  
+</body>
+
+</html>

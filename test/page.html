@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<style>
+		html,body{
+			height:100%;
+			padding:0;
+			margin:0;
+		}
+		.container{
+			background:#eee;
+			height:100%;
+		}
+		.comp_build{
+			height:50px;
+			background:#aaa;
+			margin-bottom:10px;
+		}
+	</style>
+	<body>
+		<div class="container">
+			
+		</div>
+		<script src="../js/jquery-2.1.1.min.js"></script>
+		<script>
+			$('.container').on('dragover', dragover).on('drop', drop);
+			function dragover(e){
+				var ev = e.originalEvent;
+				ev.preventDefault();
+				return true;
+			}
+			function drop(){
+				$('.container').append('<div class="comp_build">组件</div>');
+				return false;
+			}
+		</script>
+	</body>
+</html>

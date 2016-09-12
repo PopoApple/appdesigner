@@ -1,0 +1,378 @@
+/*通用设置*/
+.mui-bar-nav:not(.none) ~ .mui-content > .mui-scroll-wrapper
+{
+    top: 44px;
+}
+footer:not(.none) ~ .mui-content > .mui-scroll-wrapper
+{
+    bottom: 44px;
+}
+#root_0{
+    min-height:100%;
+}
+.container.empty{
+    min-height:44px;
+}
+.muix-grid:not(.empty) > .container.empty{
+    min-height:0;
+}
+.mui-card{
+    margin-bottom: 15px;
+}
+.mui-content > .comp .mui-card:first-child {
+    margin-top: 15px;
+}
+.mui-content > .mui-table-view:first-child{
+    margin-top:0;
+}
+.compTitle{
+    display:none;
+}
+.none{
+    display:none;
+}
+.align-center > .muix-div,
+.align-center > .mui-icon,
+.align-center > img{
+    margin-left:auto;
+    margin-right: auto;
+}
+.align-right > .muix-div,
+.align-right > .mui-icon,
+.align-right > img{
+    float:right;
+}
+.align-right:after {
+    content: ''; 
+    display: table; 
+    clear: both;
+}
+.align-center > .muix-text,
+.align-center.comp_radio,
+.align-center.comp_checkbox{
+    text-align: center;
+}
+.align-right > .muix-text,
+.align-right.comp_radio,
+.align-right.comp_checkbox{
+    text-align: right;
+}
+.mui-icon.clickEvent.active,
+img.clickEvent.active,
+span.clickEvent.active{
+    opacity: .5;
+}
+.muix-div.clickEvent{
+    position: relative;
+}
+.muix-div.clickEvent > .clickEffect{
+    position: absolute;
+    z-index: 2;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    background:rgba(0,0,0,.08);
+    display:none;
+}
+.muix-div.clickEvent.active > .clickEffect{
+    display:block;
+}
+.muix-col.clickEvent{
+    position: relative;
+}
+.muix-col.clickEvent > .clickEffect{
+    position: absolute;
+    z-index: 2;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    background:rgba(0,0,0,.08);
+    display:none;
+}
+.muix-col.clickEvent.active > .clickEffect{
+    display:block;
+}
+.compTipsMask{
+    position: absolute;
+    z-index: 841122;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:#fff;
+}
+.compDataLoadingInner{
+    text-align: center;
+    margin-top:20px;
+}
+.compTipsInfoInner{
+    text-align: center;
+    margin-top:20px;
+    color:#333;
+    font-size:14px;
+}
+#pageLoading{
+    position: absolute;
+    z-index: 10;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color:rgba(0,0,0,.5);
+    text-align: center;
+}
+/*网格*/
+.muix-grid{
+    display: -webkit-flex;
+    /*overflow: hidden;*/
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: row;
+}
+.muix-grid-cell{
+    overflow: visible;
+    float: left;
+}
+/*多功能块*/
+.muix-div{
+    box-sizing: border-box;
+}
+/*图标*/
+.comp_icon .mui-icon{
+    display:block;
+    width:24px;
+}
+/*图片*/
+.comp_image img{
+    display:block;
+    max-width: 100%;
+}
+.comp_image{
+    position: relative;
+}
+.imageDesc{
+    position: absolute;
+    bottom:0;
+    left:0;
+    height:24px;
+    width:100%;
+    background:rgba(0,0,0,.3);
+    color:#fff;
+    line-height: 24px;
+    font-size:14px;
+    padding:0 5px;
+}
+/*数据表格*/
+.comp_list,
+.comp_list > .mui-row > .muix-col{
+    position: relative;
+}
+.comp_list > .mui-row > .muix-col:after{
+    content:'';
+    position: absolute;
+    z-index: 1;
+    width:100%;
+    height:100%;
+    left:0;
+    top:0;
+    background:rgba(0,122,255,.15);
+    border:1px dotted rgba(0,122,255,.25);
+    box-sizing: border-box;
+    display:none;
+}
+.listNodataTips{
+    color:#999;
+    font-size:14px;
+    text-align: center;
+    height:50px;
+    line-height: 50px;
+}
+.fieldNoData{
+    visibility: hidden;
+}
+.mui-pull-bottom-tips{
+    text-align: center;
+    padding:5px 0;
+}
+/*轮播页*/
+.mui-slider{
+    background:#fff;
+    overflow: inherit;
+}
+.mui-slider .mui-slider-group .mui-slider-item.none{
+    display:none;
+}
+.mui-slider-indicator{
+    line-height: 0;
+    height:0;
+    bottom:16px;
+}
+.mui-slider-indicator.right{
+    text-align: right;
+    padding-right:6px;
+}
+.mui-slider-indicator .mui-indicator {
+    background: #bbb;
+    -webkit-box-shadow: 0 0 1px 1px rgba(130, 130, 130, .3); 
+    box-shadow: 0 0 1px 1px rgba(130, 130, 130, .3); 
+}
+.comp_toolbar{
+    display:none;
+}
+/*表单*/
+.form_btn{
+    text-align:center;
+    padding:10px;
+}
+.form_btn button{
+    background:#dfdfdf;
+    border:1px solid #bebebe;
+    color:#333;
+    padding:8px 15px;
+}
+.form_name{
+    text-align: center;
+    color:#333;
+    padding:10px;
+}
+.formeleNameWrapper{
+    padding:5px 0;
+    font-size: 14px;
+}
+.formeleName{
+    color:#333;
+}
+.formeleRequired{
+    color:red;
+    padding-left:3px;
+}
+/*表单元素*/
+.muix-radio,
+.muix-checkbox {
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+    margin-bottom: 3px;
+    visibility: hidden;
+}
+.muix-radio:before,
+.muix-checkbox:before {
+    font-family: Muiicons;
+    font-size: 28px;
+    font-weight: normal;
+    line-height: 1;
+    text-decoration: none;
+    color: #aaa;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    background: none;
+    -webkit-font-smoothing: antialiased;
+    visibility: visible;
+}
+.muix-radio:checked:before,
+.muix-checkbox:checked:before {
+    color: #007aff;
+}
+.muix-radio:before,
+.muix-checkbox:before {
+    content: '\e411';
+}
+.muix-radio:checked:before {
+    content: '\e441';
+}
+.muix-checkbox:checked:before {
+    content: '\e442';
+}
+.muix-radio[disabled]:before,
+.muix-checkbox[disabled]:before {
+    opacity: .3;
+}
+select, textarea,input[type='text']{
+    margin-bottom:0;
+}
+.muix-select{
+    position: relative;
+    line-height: 21px;
+    height: 40px;
+    padding: 10px 35px 10px 15px;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 3px;
+    background-color: #fff;
+    text-align: center;
+}
+.muix-select:before{
+    font-family: Muiicons;
+    position: absolute;
+    top:10px;
+    right:10px;
+    content:'\e581';
+    color:rgb(204,204,204);
+    font-size:22px;
+}
+/*文本*/
+.muix-text{
+    font-family: 'Helvetica';
+    font-size: 16px;
+    line-height: 1;
+}
+.muix-text a:active{
+    opacity: .6;
+}
+/* 顶部栏 */
+.mui-bar
+{
+    padding-right: inherit;
+    padding-left: inherit;
+}
+.mui-bar-nav.mui-bar .mui-icon
+{
+    margin-right: inherit;
+    margin-left: inherit;
+    padding-right: inherit;
+    padding-left: inherit;
+}
+.mui-bar-nav.mui-bar .align-center > .mui-icon{
+    margin-left:auto;
+    margin-right: auto;
+}
+.mui-bar .mui-icon
+{
+    padding-top: inherit;
+    padding-bottom: inherit;
+}
+.mui-bar .mui-icon:active
+{
+    opacity: inherit;
+}
+.mui-bar img
+{
+    max-height: 44px;
+}
+/* 侧滑菜单 */
+.mui-off-canvas-wrap.mui-active .mui-off-canvas-backdrop{
+    background:rgba(0,0,0,0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+}
+.mui-off-canvas-left, .mui-off-canvas-right{
+    background:rgb(239,239,244);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
